@@ -1,0 +1,23 @@
+On my honor, I pledge that I have neither received nor provided improper assistance in the completion of this assignment. Signed: [minchan Park] Student Number: [21800270]
+
+CC = g++
+LIBDIR = ../../lib
+INCDIR = ../../include
+CCFLAGS = -Wall -std=c++11 -g
+LDFLAGS = -L$(LIBDIR)
+
+SRCS = comparator.cpp printlist.cpp bubble.cpp quick.cpp insertion.cpp selection.cpp merge.cpp
+OBJS = $(SRCS:.cpp=.o)
+ARCH = libsort.a
+
+$(ARCH): $(OBJS)
+	ar cru $@ $+
+	ranlib $@
+%.o: %.cpp
+	$(CC) -c $(CCFLAGS) $< -o $@
+.PHONY: all install clean
+all: $(ARCH)
+clean: 
+	rm -f $(OBJS) $(ARCH)
+install:
+	cp -v $(ARCH) ../../lib
