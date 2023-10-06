@@ -86,7 +86,7 @@ void mergesort(int *list, int n, bool (*comp)(int x, int y)) {
   }
 }
 
-#if 0
+#if 1
 // two comparator functions 
 // The value returned indicates whether the element passed as first argument
 // is considered to go before the second in the specific ordering.
