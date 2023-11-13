@@ -1,4 +1,4 @@
-////On my honor, I pledge that I have neither received nor provided improper assistance in the completion of this assignment. Signed: [minchan Park] Student Number: [21800270]
+//On my honor, I pledge that I have neither received nor provided improper assistance in the completion of this assignment. Signed: [minchan Park] Student Number: [21800270]
 
 // mergesort.cpp by idebtor@gmail.com
 // A typical recursive implementation of mergesort using function template in C++.
