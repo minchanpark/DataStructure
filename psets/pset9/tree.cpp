@@ -704,9 +704,10 @@ int balanceFactor(tree node) {
 	DPRINT(cout << " bf" << endl;);
 	if (empty(node)) return 0;
 
-	//cout << "your code here\n";
+	int left = height(node->left);
+	int right = height(node->right);
 
-	return 100;
+	return left-right;
 }
 
 // returns true if the tree is AVL tree.
@@ -726,40 +727,61 @@ bool isAVL(tree root) {
 tree rotateLL(tree A) {
 	DPRINT(cout << "\t[LL]case at " << A->key << endl;);
 	cout << "\t[LL]case at " << A->key << endl;
-	//cout << "your code here\n";
-	return A;
+	tree B = A->left;
+	A->left = B->right;
+	B->right = A;
+	return B;
 }
 
 tree rotateRR(tree A) {
 	DPRINT(cout << "\t[RR]case at " << A->key << endl;);
 	cout << "\t[RR]case at " << A->key << endl;
-	//cout << "your code here\n";
-	return A;
+	tree B = A->right;
+	A->right = B->left;
+	B->left = A;
+	return B;
 }
 
 tree rotateLR(tree A) {
 	DPRINT(cout << "\t[LR]case at " << A->key << endl;);
 	cout << "\t[LR]case at " << A->key << endl;
-	//cout << "your code here\n";
-	return A;
+	tree B = A->left;
+	A->left = rotateRR(B);
+	return rotateLL(A);
 }
 
 tree rotateRL(tree A) {
 	DPRINT(cout << "\t[RL]case at " << A->key << endl;);
 	cout << "\t[RL]case at " << A->key << endl;
-	//cout << "your code here\n";
-	return A;
+	tree B = A->right;
+	A->right = rotateLL(B);
+	return rotateRR(A);
 }
 
 // rebalnces at the node only, not recursively, and
 // returns the node that may be different from the input node
 tree rebalance(tree node) {
 	DPRINT(cout << ">rebalance at:" << node->key << endl;);
-
 	// get balance factor first
+	int bf = balanceFactor(node);
 
-	//cout << "your code here\n";
+	if(bf == 2){
+		if(balanceFactor(node->left) == 1){
+			node=rotateLL(node);
+		}
+		else if(balanceFactor(node->left) == -1){
+			node=rotateRR(node);
+		}
+	}
 
+	else if(bf == -2){
+		if(balanceFactor(node->right) == -1){
+			node=rotateRR(node);
+		}
+		else if(balanceFactor(node->right) == 1){
+			node=rotateLL(node);
+		}
+	}
 	DPRINT(cout << "<no rebalance " << endl;);
 	return node;
 }
@@ -815,9 +837,14 @@ tree reconstruct(tree root) {
 // inserts a key into the AVL tree and rebalance it.
 tree growAVL(tree node, int key) {
 	DPRINT(cout << ">growAVL key=" << key << endl;);
-	if (empty(node)) return new TreeNode(key);
+	if(empty(node)) return new TreeNode(key);
 
-	//cout << "your code here\n";
+	if(key<node->key){
+		node->left=growAVL(node->left, key);
+	}
+	else if(key>node->key){
+		node->right=growAVL(node->right, key);
+	}
 
 	return rebalance(node);      // O(log n)
 }
@@ -825,24 +852,43 @@ tree growAVL(tree node, int key) {
 // removes a node with key in the AVL tree and rebalance it.
 tree trimAVL(tree node, int key) {
 	DPRINT(cout << ">trimAVL key=" << key << " at " << node->key << endl;);
-
 	// step 1 - BST trim as usual
 	if (empty(node)) return node;	// base case
 
 	// then node to trim must be in left subtree.
-	if (key < node->key)
-		node->left = trimAVL(node->left, key);
+	if (key < node->key){node->left = trimAVL(node->left, key);}
 	// then node to trim must be in right subtree.
-	else if (key > node->key)
-		node->right = trimAVL(node->right, key);
+	else if (key > node->key){node->right = trimAVL(node->right, key);}
 	// node with two childeren: replace it with the successor or predecessor
 	else if (node->left && node->right) {
-		//cout << "your code here\n";
+		if(height(node->left)<=height(node->right)){			//two child case
+			tree succe=succ(node->left);
+			node->key=succe->key;				        
+			node->left=trimAVL(node->left, node->key);
+		}
+		else{
+			tree prede=pred(node->right);
+			node->key = prede->key;
+			node->right=trimAVL(node->right, node->key);
+		}
 	}
 	else {  // node with only one child or no child
-		//cout << "your code here\n";
+		tree temp = node;
+		if((node->left!=nullptr||node->right!=nullptr)){		//one child case
+			if(node->left!=nullptr){
+				node=node->left;
+			}
+			else if(node->right!=nullptr){
+				node=node->right;
+			}
+			delete temp;
+			return node;
+		}
+		else{													//no child case
+			delete temp;
+			return nullptr;
+		}
 	}
-
 	if (node == nullptr) return node;   // redundant code, but useful
 
 	// step 2 - get rebalanced at this node
